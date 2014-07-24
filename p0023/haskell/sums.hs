@@ -28,13 +28,18 @@ isAbundant  = (map abu [0..] !!)
 
 genNonSumAbundant :: [Integer]
 genNonSumAbundant =
-  gen [1..1000]
+  gen [1..28123]
   where gen [] = []
         gen (p:xs)
-          | isSumOfAbundant p = gen [x | x <- xs, x `mod` p /= 0 ]
+          | isAbundant p = 
+              if elem p specialAbundants then 
+                fromIntegral p:genList p xs else genList p xs
+          | isSumOfAbundant p = genList p xs
           | otherwise = fromIntegral p : gen xs
         isSumOfAbundant n = any (twoAbundant n) [1..n `div` 2]
         twoAbundant n x = isAbundant x && isAbundant (n-x)
+        genList p xs = gen [x | x <- xs, x `mod` p /= 0 ]
+        specialAbundants = [12,18,20]
 
 main = do 
   print (show . sum $ genNonSumAbundant)
